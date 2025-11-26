@@ -1,260 +1,109 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pair Code</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WALLYJAYTECH-MD - WhatsApp Session Generator</title>
+
+  <!-- Icons & Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background: linear-gradient(135deg, #000000, #434343);
-      overflow: hidden;
-      font-family: Arial, sans-serif;
+    :root{
+      --bg-900: #070709;
+      --bg-800: #0b0b0c;
+      --card: rgba(18,18,20,0.55);
+      --glass-border: rgba(0, 150, 255, 0.14);
+      --neon: #0096ff;
+      --neon-2: #00b7ff;
+      --muted: rgba(255,255,255,0.65);
+      --muted-2: rgba(255,255,255,0.45);
+      --danger: #ff2b3a;
+      --glass-blur: 12px;
+      --radius: 14px;
+      --shadow: 0 6px 30px rgba(0,0,0,0.7);
     }
 
-    .rain {
-      position: absolute;
-      width: 1px;
-      height: 100%;
-      background: transparent;
-      overflow: hidden;
-      z-index: -1;
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(0, 150, 255, 0.04), transparent 8%),
+                  radial-gradient(1000px 500px at 90% 90%, rgba(0, 150, 255, 0.03), transparent 8%),
+                  linear-gradient(180deg, var(--bg-900), var(--bg-800));
+      color: #fff;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    .rain:before {
-      content: '';
-      position: absolute;
-      top: -100%;
-      left: 50%;
-      width: 2px;
-      height: 30%;
-      background: rgba(255, 255, 255, 0.5);
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-      animation: rain 0.5s linear infinite;
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900"><filter id="g"><feTurbulence baseFrequency="0.8" numOctaves="1" seed="5"></feTurbulence><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(%23g)" opacity="0.02" fill="%23000000"/></svg>');
+      pointer-events:none;
+      mix-blend-mode:overlay;
+      opacity:0.6;
     }
 
-    @keyframes rain {
-      to {
-        transform: translateY(100vh);
-      }
+    .container{
+      width:100%;
+      max-width:520px;
+      background: var(--card);
+      border-radius: calc(var(--radius) + 6px);
+      padding:28px;
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow), 0 0 40px rgba(0, 150, 255, 0.06) inset;
+      backdrop-filter: blur(var(--glass-blur));
+      transform: translateY(0);
+      transition: transform .32s cubic-bezier(.2,.9,.2,1), box-shadow .32s ease, border-color .32s ease;
+      position:relative;
+      overflow:hidden;
     }
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 1;
+    .container::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      pointer-events:none;
+      box-shadow: 0 0 60px rgba(0, 150, 255, 0.03) inset;
     }
 
-    .box {
-      width: 300px;
-      height: 320px;
-      padding: 20px;
-      position: relative;
-      text-align: center;
-      background-color: rgb(0, 0, 0);
-      border-radius: 10px;
-      transform: perspective(1000px) rotateY(0deg);
-      box-shadow: 0 0 20px rgba(250, 249, 249, 0.7);
-      position: relative;
+    .container:hover{
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 60px rgba(0, 150, 255, 0.12) inset;
+      border-color: rgba(0, 150, 255, 0.25);
     }
 
-    #text {
-      color: #f6f5f5;
+    /* Header */
+    .header{
+      text-align:center;
+      margin-bottom:18px;
     }
-
-    .input-container input {
-      color: #f1eaea;
+    .logo{
+      width:78px;
+      height:78px;
+      margin:0 auto 12px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(135deg, #001f3f 0%, #003366 50%, #0096ff 100%);
+      color:#fff;
+      box-shadow: 0 6px 30px rgba(0, 150, 255, 0.18);
+      font-size:32px;
     }
-
-    .centered-text {
-      color: #e9e4e4;
-    }
-
-    .input-container {
-      display: flex;
-      background: rgb(10, 10, 10);
-      border-radius: 1rem;
-      background: black;
-      box-shadow: black;
-      padding: 0.3rem;
-      gap: 0.3rem;
-      max-width: 300px;
-      width: 100%;
-    }
-
-    .input-container input {
-      border-radius: 0.8rem 0 0 0.8rem;
-      background: #e8e8e8;
-      box-shadow: inset 13px 13px 10px #dcdcdc, inset -13px -13px 10px #f4f4f4;
-      width: 100%;
-      flex-basis: 75%;
-      padding: 1rem;
-      border: none;
-      border-left: 2px solid #ecf2f8;
-      color: #000000;
-      transition: all 0.2s ease-in-out;
-    }
-
-    .input-container input:focus {
-      border-left: 2px solid #ecf1f6;
-      outline: none;
-      box-shadow: inset 13px 13px 10px #f0f2f3, inset -13px -13px 10px #f4f4f4;
-    }
-
-    .input-container button {
-      flex-basis: 15%;
-      padding: 1rem;
-      background: #000000;
-      font-weight: 700;
-      letter-spacing: 0.3rem;
-      text-transform: uppercase;
-      color: white;
-      border: 2px solid red;
-      width: 90%;
-      border-radius: 0 1rem 1rem 0;
-      transition: all 0.2s ease-in-out;
-    }
-
-    .input-container button:hover {
-      background-color: red;
-      border-color: green;
-    }
-
-    @media (max-width: 500px) {
-      .input-container {
-        flex-direction: column;
-      }
-
-      .input-container input {
-        border-radius: 0.8rem;
-      }
-
-      .input-container button {
-        padding: 0.4rem;
-        border-radius: 0.8rem;
-      }
-    }
-
-    .centered-text {
-      text-align: center;
-    }
-
-    @media (max-width: 500px) {
-      .box {
-        width: 90%; 
-      }
-    }
-
-    @media (max-width: 500px) {
-      .input-container input {
-        border-radius: 0.8rem;
-        width: 80%; 
-      }
-
-      .input-container button {
-        padding: 1rem;
-        border-radius: 0.9rem;
-        width: 100%; 
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="rain"></div>
-  <div class="container">
-    <div class="main">
-      <div class="box" id="box">
-        <div id="text">
-          <i class="fa fa-user"></i>
-          <p>
-            <h3 class="centered-text">WALLYJAYTECH-MD PAIR CODE 🖤</h3>
-            <br>
-            <h6>Made By WALLYJAYTECH-MD.</h6>
-            <h6>Enter Your Number with Country Code.</h6>
-            <div class="input-container">
-              <input placeholder="234814431xxxx" type="number" id="number" placeholder="Enter your Phone Pumber with Cuntry Code" name="">
-              <button id="submit">Submit</button>
-            </div>
-            
-            <a id="waiting-message" class="centered-text" style="display: none;">Please wait a while</a>
-            <br>
-            <br>
-            <main id="pair"></main>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
-  <script>
-    let a = document.getElementById("pair");
-    let b = document.getElementById("submit");
-    let c = document.getElementById("number");
-    let box = document.getElementById("box");
-
-    async function Copy() {
-      let text = document.getElementById("copy").innerText;
-      let obj = document.getElementById("copy");
-      await navigator.clipboard.writeText(obj.innerText.replace('CODE: ', ''));
-      obj.innerText = "COPIED";
-      obj.style = "color:blue;font-weight:bold";
-      obj.size = "5";
-      setTimeout(() => {
-        obj.innerText = text;
-        obj.style = "color:white;font-weight-bold";
-        obj.size = "5";
-      }, 500);
-    }
-
-    b.addEventListener("click", async (e) => {
-      e.preventDefault();
-      if (!c.value) {
-        a.innerHTML = '<a style="color:white;font-weight:bold">Enter your WhatsApp number with Country Code</a><br><br>';
-      } else if (c.value.replace(/[^0-9]/g, "").length < 11) {
-        a.innerHTML = '<a style="color:red;font-weight:bold">Invalid Number</a><br><br>';
-      } else {
-        const Wasi_Tech = c.value.replace(/[^0-9]/g, "");
-        let bb = "";
-        let bbc = "";
-        const cc = Wasi_Tech.split('');
-        cc.map(a => {
-          bbc += a;
-          if (bbc.length == 3) {
-            bb += " " + a;
-          } else if (bbc.length == 8) {
-            bb += " " + a;
-          } else {
-            bb += a;
-          }
-        });
-        c.type = "text";
-        c.value = "+" + bb;
-        c.style = "color:black;font-size:20px";
-        a.innerHTML = '<a style="color:white;font-weight:bold">Please Wait...</a><br><br>';
-        let { data } = await axios(`/code?number=${Wasi_Tech}`);
-        let code = data.code || "Service Unavailable";
-        a.innerHTML = '<font id="copy" onclick="Copy()" style="color:red;font-weight:bold" size="5">CODE: <span style="color:white;font-weight:bold">' + code + '</span></font><br><br><br>';
-      }
-    });
-
-    function createRain() {
-      const rain = document.querySelector('.rain');
-      for (let i = 0; i < 100; i++) {
-        const drop = document.createElement('div');
-        drop.style.left = `${Math.random() * 100}vw`;
-        drop.style.animationDelay = `${Math.random() * 2}s`;
-        rain.appendChild(drop);
-      }
-    }
-
-    createRain();
-  </script>
-</body>
-</html>
+    .title{
+      font-family: 'Orbitron', sans-serif;
+      font-size:20px;
+      color:var(--neon);
+      text-shadow: 0 0 18px rgba(0, 150, 255, 0.7);
+      letter-spacing:1px;
+      margin-bottom
