@@ -1,9 +1,9 @@
 {                                                                     
   "name": "WALLYJAYTECH-MD-SESSION",                                           
-  "description": "Session-Generator for WALLYJAYTECH-MD BOTS",                                       
+  "description": "Session Generator for WALLYJAYTECH-MD BOT",                                       
   "repository": "https://github.com/wallyjaytechh/WALLYJAYTECH-MD-SESSION",                                                                     
   "logo": "https://i.ibb.co/TLG3Mb4/photo-2024-11-01-16-00-22.jpg",           
-  "keywords": ["nodejs", "pair", "multi device"],                                               
+  "keywords": ["nodejs", "session", "whatsapp-bot", "WALLYJAYTECH-MD"],                                               
   "buildpacks": [                                                     
     {                                                                   
       "url": "heroku/nodejs"                                        
