@@ -23,18 +23,16 @@ function removeFile(FilePath) {
 		force: true
 	})
 };
-const {
-	readFile
-} = require("node:fs/promises")
+
 router.get('/', async (req, res) => {
 	const id = makeid();
-	async function SIGMA_MD_QR_CODE() {
+	async function WALLYJAYTECH_MD_QR_CODE() {
 		const {
 			state,
 			saveCreds
 		} = await useMultiFileAuthState('./temp/' + id)
 		try {
-			let Qr_Code_By_Maher_Zubair = Maher_Zubair({
+			let Qr_Code = Maher_Zubair({
 				auth: state,
 				printQRInTerminal: false,
 				logger: pino({
@@ -43,8 +41,8 @@ router.get('/', async (req, res) => {
 				browser: Browsers.macOS("Desktop"),
 			});
 
-			Qr_Code_By_Maher_Zubair.ev.on('creds.update', saveCreds)
-			Qr_Code_By_Maher_Zubair.ev.on("connection.update", async (s) => {
+			Qr_Code.ev.on('creds.update', saveCreds)
+			Qr_Code.ev.on("connection.update", async (s) => {
 				const {
 					connection,
 					lastDisconnect,
@@ -54,33 +52,43 @@ router.get('/', async (req, res) => {
 				if (connection == "open") {
 					await delay(5000);
 					let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-					await delay(800);
-				   let b64data = Buffer.from(data).toString('base64');
-				   let session = await Pair_Code_By_Maher_Zubair.sendMessage(Pair_Code_By_Maher_Zubair.user.id, { text: data });
-				   let SIGMA_MD_TEXT = `
-          _*Paired Successfully🔥*_
-put the above ID in the session ID variable when deploying WALLYJAYTECH-MD BOT.
-Use this Session ID for all bots by WALLYJAYTECH-MD BOT.
-╔═════◇
-║       『••• WALLYJAYTECH-MD •••』
-║ *Channel:* _https://whatsapp.com/channel/0029Vb64CFeHFxP6SQN1VY0I_
-║ *Main GC:* _https://chat.whatsapp.com/HF1NuB6nFBaIwdGWgeGtni_
-║ *Github:* _https://github.com/wallyjaytechh_
-║ *Owner:* _https://wa.me/2348144317152_
-║ *Note :*_Do not provide your SESSION_ID to_
-║ _anyone otherwise your WA messages can be accessed_
-║ _*Follow Me and Star my repo for more🫡.*_
-╚════════════════════════╝`
- await Pair_Code_By_Maher_Zubair.sendMessage(Pair_Code_By_Maher_Zubair.user.id,{text:SIGMA_MD_TEXT},{quoted:session})
- 
+					
+					// Create creds.js file content
+					const credsContent = `module.exports = ${data.toString()};`;
+					
+					// Send as creds.js file
+					await Qr_Code.sendMessage(Qr_Code.user.id, {
+						document: Buffer.from(credsContent),
+						mimetype: 'application/javascript',
+						fileName: 'creds.js'
+					});
 
+					let WALLYJAYTECH_TEXT = `
+╔═══════════════════════
+║  🚀 WALLYJAYTECH-MD 🚀
+╠═══════════════════════
+║ ✅ *SESSION GENERATED SUCCESSFULLY*
+║ 
+║ 📁 Your session file "creds.js" has been sent!
+║ 💾 Use this file for WALLYJAYTECH-MD BOT
+║ 
+║ 🌐 *Channel:* https://whatsapp.com/channel/0029Vb64CFeHFxP6SQN1VY0I
+║ 👥 *Main GC:* https://chat.whatsapp.com/HF1NuB6nFBaIwdGWgeGtni
+║ 💻 *Github:* https://github.com/wallyjaytechh
+║ 👨‍💻 *Owner:* https://wa.me/2348144317152
+║ 
+║ ⚠️ *WARNING:* Do not share your creds.js file with anyone!
+║ ⭐ *Follow and Star my repo for more updates!*
+╚═══════════════════════`;
+
+					await Qr_Code.sendMessage(Qr_Code.user.id, {text: WALLYJAYTECH_TEXT});
 
 					await delay(100);
-					await Qr_Code_By_Maher_Zubair.ws.close();
-					return await removeFile("temp/" + id);
+					await Qr_Code.ws.close();
+					return await removeFile('./temp/' + id);
 				} else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
 					await delay(10000);
-					SIGMA_MD_QR_CODE();
+					WALLYJAYTECH_MD_QR_CODE();
 				}
 			});
 		} catch (err) {
@@ -90,9 +98,9 @@ Use this Session ID for all bots by WALLYJAYTECH-MD BOT.
 				});
 			}
 			console.log(err);
-			await removeFile("temp/" + id);
+			await removeFile('./temp/' + id);
 		}
 	}
-	return await SIGMA_MD_QR_CODE()
+	return await WALLYJAYTECH_MD_QR_CODE()
 });
 module.exports = router
