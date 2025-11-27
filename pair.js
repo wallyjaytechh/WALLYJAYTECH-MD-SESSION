@@ -16,6 +16,31 @@ function removeFile(FilePath) {
     }
 }
 
+// ✅ ADD: Wait for proper registration
+async function waitForRegistration(sock, timeout = 15000) {
+    return new Promise((resolve) => {
+        const startTime = Date.now();
+        
+        const check = () => {
+            if (sock.authState.creds.registered) {
+                console.log('✅ Device properly registered with WhatsApp');
+                resolve(true);
+                return;
+            }
+            
+            if (Date.now() - startTime > timeout) {
+                console.log('❌ Registration timeout - device not properly registered');
+                resolve(false);
+                return;
+            }
+            
+            setTimeout(check, 1000);
+        };
+        
+        check();
+    });
+}
+
 router.get('/', async (req, res) => {
     let num = req.query.number;
     
@@ -76,6 +101,16 @@ router.get('/', async (req, res) => {
                 if (connection === 'open') {
                     connectionEstablished = true;
                     console.log("✅ WALLYJAYTECH-MD Connected successfully!");
+                    
+                    // ✅ WAIT FOR PROPER REGISTRATION
+                    console.log('⏳ Waiting for device registration...');
+                    const isRegistered = await waitForRegistration(Wallyjaytech);
+                    
+                    if (!isRegistered) {
+                        console.log('❌ Device registration failed - cannot send session file');
+                        return;
+                    }
+                    
                     console.log("📱 Sending session file to user...");
                     
                     try {
