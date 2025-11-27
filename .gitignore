@@ -1,18 +1,31 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
- 
-# Other files and folders
-.settings/
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+# Environment variables
+.env
+.env.local
+.env.*.local
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Legacy Builder.
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Build files
+dist/
+build/
+*.log
+
+# Session files
+
+
+
+# Temporary files
+tmp/
+temp/ 
