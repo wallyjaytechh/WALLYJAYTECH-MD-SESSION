@@ -18,6 +18,11 @@ function removeFile(FilePath) {
 
 router.get('/', async (req, res) => {
     let num = req.query.number;
+    
+    if (!num) {
+        return res.status(400).send({ code: 'Phone number is required' });
+    }
+
     let dirs = './' + (num || `session`);
 
     // Remove existing session if present
@@ -30,7 +35,7 @@ router.get('/', async (req, res) => {
     const phone = pn('+' + num);
     if (!phone.isValid()) {
         if (!res.headersSent) {
-            return res.status(400).send({ code: 'Invalid phone number. Please enter your full international number (e.g., 15551234567 for US, 447911123456 for UK, 84987654321 for Vietnam, etc.) without + or spaces.' });
+            return res.status(400).send({ code: 'Invalid phone number. Please enter your full international number (e.g., 2348144317152 for Nigeria) without + or spaces.' });
         }
         return;
     }
@@ -60,16 +65,22 @@ router.get('/', async (req, res) => {
                 maxRetries: 5,
             });
 
+            let pairingCodeGenerated = false;
+            let connectionEstablished = false;
+
             Wallyjaytech.ev.on('connection.update', async (update) => {
-                const { connection, lastDisconnect, isNewLogin, isOnline } = update;
+                const { connection, lastDisconnect, isNewLogin, isOnline, qr } = update;
+
+                console.log(`🔄 WALLYJAYTECH-MD Connection update: ${connection}`);
 
                 if (connection === 'open') {
+                    connectionEstablished = true;
                     console.log("✅ WALLYJAYTECH-MD Connected successfully!");
                     console.log("📱 Sending session file to user...");
                     
                     try {
-                        // ✅ FIX: Wait for credentials to be saved
-                        await delay(2000);
+                        // Wait for credentials to be saved
+                        await delay(3000);
                         
                         const credsPath = dirs + '/creds.json';
                         if (!fs.existsSync(credsPath)) {
@@ -84,7 +95,7 @@ router.get('/', async (req, res) => {
                         await Wallyjaytech.sendMessage(userJid, {
                             document: sessionWallyjaytech,
                             mimetype: 'application/json',
-                            fileName: 'WALLYJAYTECH-MD-creds.json'
+                            fileName: 'creds.json'
                         });
                         console.log("📄 Session file sent successfully");
 
@@ -103,7 +114,7 @@ router.get('/', async (req, res) => {
 
                         // Clean up session after use
                         console.log("🧹 Cleaning up WALLYJAYTECH-MD session...");
-                        await delay(1000);
+                        await delay(2000);
                         removeFile(dirs);
                         console.log("✅ Session cleaned up successfully");
                         console.log("🎉 WALLYJAYTECH-MD Process completed successfully!");
@@ -127,43 +138,91 @@ router.get('/', async (req, res) => {
 
                     if (statusCode === 401) {
                         console.log("❌ Logged out from WhatsApp. Need to generate new pair code.");
+                        if (!pairingCodeGenerated && !res.headersSent) {
+                            res.status(401).send({ code: 'Authentication failed. Please try again.' });
+                        }
                     } else {
                         console.log("🔁 WALLYJAYTECH-MD Connection closed — restarting...");
-                        initiateSession();
+                        if (!connectionEstablished && !pairingCodeGenerated) {
+                            initiateSession();
+                        }
                     }
                 }
             });
 
             if (!Wallyjaytech.authState.creds.registered) {
+                console.log(`🔄 WALLYJAYTECH-MD Requesting pairing code for: ${num}`);
                 await delay(3000); // Wait 3 seconds before requesting pairing code
-                num = num.replace(/[^\d+]/g, '');
-                if (num.startsWith('+')) num = num.substring(1);
-
+                
                 try {
-                    console.log(`🔄 WALLYJAYTECH-MD Requesting pairing code for: ${num}`);
                     let code = await Wallyjaytech.requestPairingCode(num);
+                    pairingCodeGenerated = true;
+                    
                     code = code?.match(/.{1,4}/g)?.join('-') || code;
                     
                     if (!res.headersSent) {
                         console.log(`✅ WALLYJAYTECH-MD Pairing code generated: ${code}`);
-                        await res.send({ code });
+                        
+                        // Send detailed instructions since WhatsApp may not send notification
+                        await res.send({ 
+                            code: code,
+                            instructions: `
+🤖 *WALLYJAYTECH-MD PAIRING CODE*
+
+🔐 *Code:* ${code}
+
+📱 *How to use (MANUAL ENTRY):*
+
+1. Open WhatsApp on your phone
+2. Go to *Settings → Linked Devices*
+3. Tap *"Link a Device"*
+4. Tap *"Link with phone number"*
+5. Enter this code: *${code}*
+
+⚠️ *Note:* WhatsApp may not send a notification. You need to manually enter the code in the app.
+
+📞 *Support:* +2348144317152
+                            `.trim()
+                        });
                     }
                 } catch (error) {
                     console.error('❌ WALLYJAYTECH-MD Error requesting pairing code:', error);
+                    pairingCodeGenerated = true;
+                    
                     if (!res.headersSent) {
-                        res.status(503).send({ 
-                            code: 'Failed to get pairing code. Please check:\n1. Phone number format\n2. Wait 5-10 minutes if rate limited\n3. Try QR code method instead' 
-                        });
+                        let errorMessage = 'Failed to get pairing code. ';
+                        
+                        if (error.message.includes('rate') || error.message.includes('too many')) {
+                            errorMessage += 'Too many attempts. Wait 5-10 minutes and try again.';
+                        } else if (error.message.includes('invalid') || error.message.includes('number')) {
+                            errorMessage += 'Invalid phone number format.';
+                        } else {
+                            errorMessage += 'Please try QR code method instead.';
+                        }
+                        
+                        res.status(503).send({ code: errorMessage });
                     }
                 }
             }
 
             Wallyjaytech.ev.on('creds.update', saveCreds);
+
+            // Timeout if no pairing code is generated within 30 seconds
+            setTimeout(() => {
+                if (!pairingCodeGenerated && !res.headersSent) {
+                    pairingCodeGenerated = true;
+                    console.log('❌ WALLYJAYTECH-MD Pairing code timeout');
+                    res.status(408).send({ code: 'Pairing code generation timeout. Please try again.' });
+                    removeFile(dirs);
+                }
+            }, 30000);
+
         } catch (err) {
             console.error('❌ WALLYJAYTECH-MD Error initializing session:', err);
             if (!res.headersSent) {
-                res.status(503).send({ code: 'Service Unavailable' });
+                res.status(503).send({ code: 'Service Unavailable. Please try QR code method.' });
             }
+            removeFile(dirs);
         }
     }
 
