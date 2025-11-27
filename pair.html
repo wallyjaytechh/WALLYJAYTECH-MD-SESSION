@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Knight Bot - WhatsApp Linker</title>
+  <title>WALLYJAYTECH-MD - WhatsApp Linker</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
   <style>
     :root {
-      --primary-color: #000000;
-      --secondary-color: #ffffff;
+      --primary-color: #00FFFF; /* Cyan instead of black */
+      --secondary-color: #000000; /* Black instead of white */
       --accent-color: #f0f0f0;
-      --text-color: #000000;
-      --background-color: #ffffff;
-      --hover-color: #f5f5f5;
-      --border-color: rgba(0, 0, 0, 0.1);
+      --text-color: #000000; /* Black text */
+      --background-color: #000000; /* Black background */
+      --hover-color: #006666; /* Dark cyan for hover */
+      --border-color: rgba(0, 255, 255, 0.3); /* Cyan borders */
     }
 
     * {
@@ -36,10 +36,10 @@
     .container {
       width: 100%;
       max-width: 450px;
-      background: var(--background-color);
+      background: var(--secondary-color); /* Black background */
       border-radius: 16px;
       padding: 25px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 16px rgba(0, 255, 255, 0.2); /* Cyan shadow */
       border: 1px solid var(--border-color);
     }
 
@@ -52,26 +52,26 @@
       width: 70px;
       height: 70px;
       margin: 0 auto 16px;
-      background: var(--primary-color);
+      background: var(--primary-color); /* Cyan */
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 28px;
-      color: white;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+      color: var(--secondary-color); /* Black text */
+      box-shadow: 0 2px 12px rgba(0, 255, 255, 0.3); /* Cyan shadow */
     }
 
     .title {
       font-size: 24px;
       font-weight: 700;
       margin-bottom: 8px;
-      color: var(--primary-color);
+      color: var(--primary-color); /* Cyan */
     }
 
     .subtitle {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.7);
+      color: rgba(0, 255, 255, 0.8); /* Cyan with opacity */
       margin-bottom: 20px;
     }
 
@@ -89,20 +89,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
+      color: #000000; /* Black icons */
       font-size: 18px;
       text-decoration: none;
       transition: all 0.3s ease;
+      background: var(--primary-color); /* Cyan background */
     }
 
     .social-icons a.youtube { background: #FF0000; }
     .social-icons a.telegram { background: #0088cc; }
-    .social-icons a.whatsapp { background: #0cfa10; }
-    .social-icons a.github { background: #333; }
+    .social-icons a.whatsapp { background: #25D366; }
+    .social-icons a.github { background: #00FFFF; } /* Cyan */
 
     .social-icons a:hover {
       transform: scale(1.1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0, 255, 255, 0.4); /* Cyan shadow */
     }
 
     /* Toggle Switch Styles */
@@ -111,7 +112,7 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 20px;
-      background: var(--hover-color);
+      background: var(--hover-color); /* Dark cyan */
       border-radius: 12px;
       padding: 4px;
       border: 1px solid var(--border-color);
@@ -127,24 +128,26 @@
       font-weight: 500;
       transition: all 0.3s ease;
       position: relative;
+      color: var(--secondary-color); /* Black text */
     }
 
     .toggle-option.active {
-      background: var(--primary-color);
-      color: var(--secondary-color);
+      background: var(--primary-color); /* Cyan */
+      color: var(--secondary-color); /* Black text */
     }
 
     .toggle-option:not(.active) {
-      color: var(--text-color);
+      color: var(--primary-color); /* Cyan text */
     }
 
     .toggle-option:hover:not(.active) {
-      background: var(--background-color);
+      background: rgba(0, 255, 255, 0.1); /* Light cyan */
     }
+
     .copy-btn {
       width: 100%;
       padding: 12px;
-      background: var(--hover-color);
+      background: var(--hover-color); /* Dark cyan */
       border: 1.5px solid var(--border-color);
       border-radius: 12px;
       font-size: 15px;
@@ -154,11 +157,13 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      color: var(--secondary-color); /* Black text */
     }
 
     .copy-btn:hover {
-      background: var(--background-color);
+      background: var(--primary-color); /* Cyan */
       border-color: var(--primary-color);
+      color: var(--secondary-color); /* Black text */
     }
 
     .input-group {
@@ -175,6 +180,7 @@
       margin-bottom: 8px;
       font-weight: 500;
       font-size: 13px;
+      color: var(--primary-color); /* Cyan */
     }
 
     .input-field {
@@ -182,24 +188,28 @@
       padding: 12px;
       border: 1.5px solid var(--border-color);
       border-radius: 12px;
-      background: var(--background-color);
-      color: var(--text-color);
+      background: var(--secondary-color); /* Black background */
+      color: var(--primary-color); /* Cyan text */
       font-size: 15px;
     }
 
     .input-field:focus {
       outline: none;
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 0 2px rgba(0, 255, 255, 0.2); /* Cyan shadow */
+    }
+
+    .input-field::placeholder {
+      color: rgba(0, 255, 255, 0.5); /* Light cyan placeholder */
     }
 
     .generate-btn {
       width: 100%;
       padding: 12px;
-      background: var(--primary-color);
+      background: var(--primary-color); /* Cyan */
       border: none;
       border-radius: 12px;
-      color: var(--secondary-color);
+      color: var(--secondary-color); /* Black text */
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
@@ -209,7 +219,8 @@
 
     .generate-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3); /* Cyan shadow */
+      background: #00E5E5; /* Lighter cyan */
     }
 
     .generate-btn.hidden {
@@ -217,7 +228,7 @@
     }
 
     .code-display {
-      background: var(--hover-color);
+      background: var(--hover-color); /* Dark cyan */
       padding: 12px;
       border-radius: 12px;
       text-align: center;
@@ -229,16 +240,18 @@
       align-items: center;
       justify-content: center;
       border: 1.5px solid var(--border-color);
+      color: var(--secondary-color); /* Black text */
     }
 
     .qr-display {
-      background: var(--hover-color);
+      background: var(--hover-color); /* Dark cyan */
       padding: 30px;
       border-radius: 12px;
       text-align: center;
       margin-bottom: 16px;
       border: 1.5px solid var(--border-color);
       display: none;
+      color: var(--secondary-color); /* Black text */
     }
 
     .qr-image {
@@ -246,17 +259,17 @@
       max-height: 280px;
       margin: 0 auto 20px;
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 16px rgba(0, 255, 255, 0.2); /* Cyan shadow */
     }
 
     .qr-instructions {
       font-size: 13px;
-      color: rgba(0, 0, 0, 0.7);
+      color: var(--primary-color); /* Cyan text */
       line-height: 1.5;
     }
 
     .success-message {
-      color: #000aff;
+      color: var(--primary-color); /* Cyan */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -265,7 +278,7 @@
     }
 
     .error-message {
-      color: #e74c3c;
+      color: #FF4444; /* Red for errors */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -281,7 +294,7 @@
 
     .loading i {
       font-size: 24px;
-      color: var(--primary-color);
+      color: var(--primary-color); /* Cyan */
       animation: spin 1s linear infinite;
     }
 
@@ -294,7 +307,7 @@
       text-align: center;
       margin-top: 20px;
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.5);
+      color: var(--primary-color); /* Cyan */
     }
 
     @media (max-width: 480px) {
@@ -324,13 +337,13 @@
   <div class="container">
     <div class="header">
       <div class="logo"><i class="fas fa-robot"></i></div>
-      <h1 class="title">Knight Bot</h1>
+      <h1 class="title">WALLYJAYTECH-MD</h1>
       <p class="subtitle">Link your WhatsApp device</p>
       <div class="social-icons">
-        <a href="https://www.youtube.com/@mr_unique_hacker?sub_confirmation=1" target="_blank" class="youtube"><i class="fab fa-youtube"></i></a>
-        <a href="https://t.me/+hxojkc7kaVViYzdl" target="_blank" class="telegram"><i class="fab fa-telegram-plane"></i></a>
-        <a href="https://whatsapp.com/channel/0029Va90zAnIHphOuO8Msp3A" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://github.com/mruniquehacker/Knightbot-md" target="_blank" class="github"><i class="fab fa-github"></i></a>
+        <a href="https://www.youtube.com/@wallyjaytechy" target="_blank" class="youtube"><i class="fab fa-youtube"></i></a>
+        <a href="https://t.me/wallyjaytech" target="_blank" class="telegram"><i class="fab fa-telegram-plane"></i></a>
+        <a href="https://wa.me/2348144317152" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://github.com/wallyjaytechh" target="_blank" class="github"><i class="fab fa-github"></i></a>
       </div>
     </div>
 
@@ -346,7 +359,7 @@
 
     <div class="input-group" id="inputGroup">
       <label class="input-label">Enter your WhatsApp number with country code</label>
-      <input type="text" id="mobileNumber" class="input-field" placeholder="+917023951514" pattern="[+][0-9]{10,}" title="Please enter country code starting with + followed by number">
+      <input type="text" id="mobileNumber" class="input-field" placeholder="+2348144317152" pattern="[+][0-9]{10,}" title="Please enter country code starting with + followed by number">
     </div>
 
     <button class="generate-btn" id="submit">
@@ -373,7 +386,7 @@
     </button>
 
     <div class="footer">
-      <p>© 2025 Mr Unique Hacker | Knight Bot</p>
+      <p>© 2025 Wally Jay Tech | WALLYJAYTECH-MD</p>
     </div>
   </div>
 
@@ -482,6 +495,7 @@
         loadingSpinner.style.display = "none";
       }
     });
+
     function copyCode() {
       const codeDisplay = document.getElementById("codeDisplay").innerText;
       const code = codeDisplay.replace('CODE: ', '');
