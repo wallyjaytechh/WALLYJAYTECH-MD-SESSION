@@ -1,5 +1,6 @@
 import express from 'express';
 import fs from 'fs';
+import path from 'path';
 import pino from 'pino';
 import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, Browsers, jidNormalizedUser, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
 import { delay } from '@whiskeysockets/baileys';
@@ -54,7 +55,7 @@ router.get('/', async (req, res) => {
                 console.log('3. Tap "Link a Device"');
                 console.log('4. Scan the QR code below');
                 // Display QR in terminal
-                //qrcodeTerminal.generate(qr, { small: true });
+                qrcodeTerminal.generate(qr, { small: true });
                 try {
                     // Generate QR code as data URL
                     const qrDataURL = await QRCode.toDataURL(qr, {
@@ -64,7 +65,7 @@ router.get('/', async (req, res) => {
                         margin: 1,
                         color: {
                             dark: '#000000',
-                            light: '#FFFFFF'
+                            light: '#00FFFF' // Cyan background
                         }
                     });
 
@@ -95,18 +96,18 @@ router.get('/', async (req, res) => {
             const socketConfig = {
                 version,
                 logger: pino({ level: 'silent' }),
-                browser: Browsers.windows('Chrome'), // Using Browsers enum for better compatibility
+                browser: Browsers.windows('Chrome'),
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
-                markOnlineOnConnect: false, // Disable to reduce connection issues
-                generateHighQualityLinkPreview: false, // Disable to reduce connection issues
-                defaultQueryTimeoutMs: 60000, // Increase timeout
-                connectTimeoutMs: 60000, // Increase connection timeout
-                keepAliveIntervalMs: 30000, // Keep connection alive
-                retryRequestDelayMs: 250, // Retry delay
-                maxRetries: 5, // Maximum retries
+                markOnlineOnConnect: false,
+                generateHighQualityLinkPreview: false,
+                defaultQueryTimeoutMs: 60000,
+                connectTimeoutMs: 60000,
+                keepAliveIntervalMs: 30000,
+                retryRequestDelayMs: 250,
+                maxRetries: 5,
             };
 
             // Create socket and bind events
@@ -126,13 +127,50 @@ router.get('/', async (req, res) => {
                 if (connection === 'open') {
                     console.log('✅ Connected successfully!');
                     console.log('💾 Session saved to:', dirs);
-                    reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+                    reconnectAttempts = 0;
                     
                     try {
+                        // ✅ FIX: Wait longer for credentials to be fully saved
+                        console.log('⏳ Waiting for credentials to save...');
+                        await delay(4000);
                         
+                        // ✅ FIX: Check session directory contents
+                        console.log('📁 Checking session directory contents:');
+                        const sessionFiles = fs.readdirSync(dirs);
+                        let foundCreds = false;
+                        
+                        for (const file of sessionFiles) {
+                            const filePath = path.join(dirs, file);
+                            const stats = fs.statSync(filePath);
+                            console.log(`   📄 ${file} - ${stats.size} bytes`);
+                            if (file === 'creds.json' && stats.size > 0) {
+                                foundCreds = true;
+                            }
+                        }
+                        
+                        if (!foundCreds) {
+                            console.log('❌ creds.json not found or empty in session directory!');
+                            // Try to force save credentials
+                            await saveCreds();
+                            await delay(2000);
+                        }
+                        
+                        const credsPath = path.join(dirs, 'creds.json');
+                        if (!fs.existsSync(credsPath)) {
+                            console.log('❌ creds.json does not exist after connection!');
+                            return;
+                        }
+                        
+                        const stats = fs.statSync(credsPath);
+                        if (stats.size === 0) {
+                            console.log('❌ creds.json is empty (0 bytes)!');
+                            return;
+                        }
+                        
+                        console.log(`✅ creds.json verified: ${stats.size} bytes`);
                         
                         // Read the session file
-                        const sessionWallyjaytech = fs.readFileSync(dirs + '/creds.json');
+                        const sessionWallyjaytech = fs.readFileSync(credsPath);
                         
                         // Get the user's JID from the session
                         const userJid = Object.keys(sock.authState.creds.me || {}).length > 0 
@@ -144,24 +182,20 @@ router.get('/', async (req, res) => {
                             await sock.sendMessage(userJid, {
                                 document: sessionWallyjaytech,
                                 mimetype: 'application/json',
-                                fileName: 'creds.json'
+                                fileName: 'WALLYJAYTECH-MD-creds.json'
                             });
                             console.log("📄 Session file sent successfully to", userJid);
                             
-                            // Send video thumbnail with caption
+                            // Send welcome message with WALLYJAYTECH-MD branding
                             await sock.sendMessage(userJid, {
                                 image: { url: 'https://i.ibb.co/TLG3Mb4/photo-2024-11-01-16-00-22.jpg' },
-                                caption: ` *WALLYJAYTECH-MD V 1.0.0*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat`
+                                caption: `🤖 *WALLYJAYTECH-MD V 1.0.0*\n\n✅ Successfully Connected!\n🚀 Bug Fixes + New Commands + Fast AI Chat\n\n📺 YouTube: @wallyjaytechy\n📱 Telegram: @wallyjaytech\n💻 GitHub: wallyjaytechh\n📞 WhatsApp: +2348144317152`
                             });
-                            console.log("guide sent successfully");
+                            console.log("✅ Welcome message sent successfully");
                             
-                            // Send warning message
+                            // Send warning message with WALLYJAYTECH-MD branding
                             await sock.sendMessage(userJid, {
-                                text: `⚠️Do not share this file with anybody⚠️\n 
-┌┤✑  Thanks for using WALLYJAYTECH-MD
-│└────────────┈ ⳹        
-│©2025 Wally Jay Tech
-└─────────────────┈ ⳹\n\n`
+                                text: `⚠️ *IMPORTANT SECURITY WARNING* ⚠️\n\nDo not share this creds.json file with anybody!\n\n┌┤✑ Thanks for using WALLYJAYTECH-MD\n│└────────────┈ ⳹        \n│© 2025 Wally Jay Tech\n└─────────────────┈ ⳹\n\n🔗 YouTube: https://youtube.com/@wallyjaytechy\n🔗 Telegram: https://t.me/wallyjaytech\n🔗 GitHub: https://github.com/wallyjaytechh`
                             });
                         } else {
                             console.log("❌ Could not determine user JID to send session file");
@@ -172,25 +206,24 @@ router.get('/', async (req, res) => {
                     
                     // Clean up session after successful connection and sending files
                     setTimeout(() => {
-                        console.log('🧹 Cleaning up session...');
+                        console.log('🧹 Cleaning up WALLYJAYTECH-MD session...');
                         const deleted = removeFile(dirs);
                         if (deleted) {
                             console.log('✅ Session cleaned up successfully');
                         } else {
                             console.log('❌ Failed to clean up session folder');
                         }
-                    }, 15000); // Wait 15 seconds before cleanup to ensure messages are sent
+                    }, 15000);
                 }
 
                 if (connection === 'close') {
-                    console.log('❌ Connection closed');
+                    console.log('❌ WALLYJAYTECH-MD Connection closed');
                     if (lastDisconnect?.error) {
                         console.log('❗ Last Disconnect Error:', lastDisconnect.error);
                     }
                     
                     const statusCode = lastDisconnect?.error?.output?.statusCode;
                     
-                    // Handle specific error codes
                     if (statusCode === 401) {
                         console.log('🔐 Logged out - need new QR code');
                         removeFile(dirs);
@@ -200,7 +233,6 @@ router.get('/', async (req, res) => {
                         
                         if (reconnectAttempts <= maxReconnectAttempts) {
                             console.log(`🔄 Reconnect attempt ${reconnectAttempts}/${maxReconnectAttempts}`);
-                            // Wait a bit before reconnecting
                             setTimeout(() => {
                                 try {
                                     sock = makeWASocket(socketConfig);
@@ -219,14 +251,12 @@ router.get('/', async (req, res) => {
                         }
                     } else {
                         console.log('🔄 Connection lost - attempting to reconnect...');
-                        // Let it reconnect automatically
                     }
                 }
             };
 
-            // Bind the event handler
+            // Bind the event handlers
             sock.ev.on('connection.update', handleConnectionUpdate);
-
             sock.ev.on('creds.update', saveCreds);
 
             // Set a timeout to clean up if no QR is generated
@@ -236,10 +266,10 @@ router.get('/', async (req, res) => {
                     res.status(408).send({ code: 'QR generation timeout' });
                     removeFile(dirs);
                 }
-            }, 30000); // 30 second timeout
+            }, 30000);
 
         } catch (err) {
-            console.error('Error initializing session:', err);
+            console.error('Error initializing WALLYJAYTECH-MD session:', err);
             if (!res.headersSent) {
                 res.status(503).send({ code: 'Service Unavailable' });
             }
@@ -264,7 +294,7 @@ process.on('uncaughtException', (err) => {
     if (e.includes("Stream Errored (restart required)")) return;
     if (e.includes("statusCode: 515")) return;
     if (e.includes("statusCode: 503")) return;
-    console.log('Caught exception: ', err);
+    console.log('WALLYJAYTECH-MD Caught exception: ', err);
 });
 
 export default router;
