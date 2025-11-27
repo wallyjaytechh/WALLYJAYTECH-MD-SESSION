@@ -1,110 +1,111 @@
-import express from 'express';
-import { SessionManager } from './sessionManager.js';
-import pn from 'awesome-phonenumber';
+const PastebinAPI = require('pastebin-js');
+const pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL');
+const { makeid } = require('./id');
+const express = require('express');
+const fs = require('fs');
+let router = express.Router();
+const pino = require('pino');
+const {
+    default: Mbuvi_Tech,
+    useMultiFileAuthState,
+    delay,
+    makeCacheableSignalKeyStore,
+    Browsers
+} = require('@whiskeysockets/baileys');
 
-const router = express.Router();
+function removeFile(FilePath) {
+    if (!fs.existsSync(FilePath)) return false;
+    fs.rmSync(FilePath, { recursive: true, force: true });
+}
 
 router.get('/', async (req, res) => {
-    let { number } = req.query;
+    const id = makeid();
+    let num = req.query.number;
     
-    if (!number) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Phone number is required' 
-        });
-    }
-
-    // Clean and validate phone number
-    number = number.replace(/[^0-9]/g, '');
-    const phone = pn('+' + number);
-    
-    if (!phone.isValid()) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Invalid phone number format. Please use full international number without + (e.g., 2348144317152)' 
-        });
-    }
-
-    const e164Number = phone.getNumber('e164').replace('+', '');
-    const sessionManager = new SessionManager(`pair_${e164Number}`);
-    
-    try {
-        const { sock, state } = await sessionManager.initializeConnection();
-        
-        if (!state.creds.registered) {
-            await delay(2000);
-            
-            const pairingCode = await sock.requestPairingCode(e164Number);
-            const formattedCode = pairingCode.match(/.{1,4}/g)?.join('-') || pairingCode;
-            
-            console.log(`📱 Pairing code requested for: ${e164Number}`);
-            
-            // Wait for connection and credentials
-            return new Promise((resolve) => {
-                const connectionHandler = async (update) => {
-                    const { connection, qr } = update;
-                    
-                    if (connection === 'open') {
-                        console.log(`✅ Successfully connected: ${e164Number}`);
-                        sock.ev.off('connection.update', connectionHandler);
-                        
-                        // Wait a bit for credentials to save
-                        await delay(3000);
-                        
-                        const sessionData = sessionManager.getSessionData();
-                        
-                        if (sessionData) {
-                            res.json({
-                                success: true,
-                                message: 'Session created successfully!',
-                                code: formattedCode,
-                                sessionData: {
-                                    clientId: sessionData.me?.id,
-                                    platform: sessionData.me?.platform,
-                                    registered: true
-                                }
-                            });
-                        } else {
-                            res.json({
-                                success: true,
-                                message: 'Pairing code generated! Check your WhatsApp.',
-                                code: formattedCode,
-                                sessionData: null
-                            });
-                        }
-                        
-                        // Don't cleanup immediately - let user use the session
-                        setTimeout(() => sessionManager.cleanup(), 30000);
-                        resolve();
-                    }
-                };
-                
-                sock.ev.on('connection.update', connectionHandler);
-                
-                // Timeout after 2 minutes
-                setTimeout(() => {
-                    sock.ev.off('connection.update', connectionHandler);
-                    if (!res.headersSent) {
-                        res.status(408).json({
-                            success: false,
-                            message: 'Pairing timeout. Please try again.'
-                        });
-                        sessionManager.cleanup();
-                        resolve();
-                    }
-                }, 120000);
+    async function Mbuvi_MD_PAIR_CODE() {
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        try {
+            let Pair_Code_By_Mbuvi_Tech = Mbuvi_Tech({
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
+                },
+                version: [2, 3000, 1025190524],
+                printQRInTerminal: false,
+                logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
+                browser: ["Windows", "Firefox", "130.0.1"],
             });
+
+            if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
+                await delay(1500);
+                num = num.replace(/[^0-9]/g, '');
+               const custom = "WALLYBOT"; // 8 characters like the original "JUNEXBOT"
+                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num, custom);
+                if (!res.headersSent) {
+                    await res.send({ code });
+                }
+            }
+
+            Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
+            Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
+                const { connection, lastDisconnect } = s;
+                if (connection === 'open') {
+                    await Pair_Code_By_Mbuvi_Tech.newsletterFollow("120363423767541304@newsletter");
+                    await Pair_Code_By_Mbuvi_Tech.groupAcceptInvite("Hd14oCh8LT1A3EheIpZycL");
+                    await delay(5000);
+                    
+                    // Read and send creds.json directly
+                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
+                    await delay(1000);
+                    
+                    // Send the creds.json content directly without prefix
+                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(
+                        Pair_Code_By_Mbuvi_Tech.user.id, 
+                        { 
+                            document: Buffer.from(data), 
+                            fileName: 'creds.json', 
+                            mimetype: 'application/json' 
+                        }
+                    );
+
+                    let Wallyjay_Tech_TEXT = `
+╔════════════════════
+║『 SESSION CONNECTED』
+║ 🟢 BOT: WallyJayTech
+║ 🟢 OWNER: WallyJay
+║ 🟢 TYPE: creds.json
+╚════════════════════
+
+Session file (creds.json) has been sent!
+Save this file for your bot.
+
+Don't Forget To Give Star⭐ To My Repo
+______________________________`;
+
+                    await Pair_Code_By_Mbuvi_Tech.sendMessage(
+                        Pair_Code_By_Mbuvi_Tech.user.id, 
+                        { text: Wallyjay_Tech_TEXT }, 
+                        { quoted: session }
+                    );
+
+                    await delay(100);
+                    await Pair_Code_By_Mbuvi_Tech.ws.close();
+                    return await removeFile('./temp/' + id);
+                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
+                    await delay(10000);
+                    Mbuvi_MD_PAIR_CODE();
+                }
+            });
+        } catch (err) {
+            console.log('Service restarted');
+            await removeFile('./temp/' + id);
+            if (!res.headersSent) {
+                await res.send({ code: 'Service Currently Unavailable' });
+            }
         }
-        
-    } catch (error) {
-        console.error('Pairing error:', error);
-        sessionManager.cleanup();
-        
-        res.status(500).json({
-            success: false,
-            message: 'Failed to generate pairing code. Please try again.'
-        });
     }
+    
+    return await Mbuvi_MD_PAIR_CODE();
 });
 
-export default router;
+module.exports = router;
