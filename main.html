@@ -2,38 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>WALLYJAYTECH-MD Session Generator</title>
+  <title>WALLYJAYTECH-MD SESSION</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      background-color: black;
-    } 
+      background-image: url("https://files.catbox.moe/0xmnxl.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Exo 2', sans-serif;
+      color: #e5f5f1;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0, 20, 40, 0.85) 0%, rgba(0, 40, 60, 0.7) 100%);
+      z-index: -1;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 90%;
+      max-width: 800px;
+      padding: 2rem;
+      background: rgba(10, 25, 47, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 255, 170, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #00ffaa, #0088ff, #00ffaa);
+      animation: shimmer 3s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -100% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      background: linear-gradient(90deg, #00ffaa, #0088ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2.5rem;
+      text-align: center;
+      font-weight: 300;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      width: 100%;
+    }
 
     .btn {
       --color: #e5f5f1;
-      --color2: rgb(0, 0, 0);
-      width: 200px;
-      padding: 0.8em 1.75em;
-      background-color: transparent;
-      border-radius: 6px;
-      border: .3px solid var(--color);
-      transition: .5s;
+      --color2: #0a192f;
+      width: 220px;
+      padding: 1.2em 2em;
+      background: rgba(0, 255, 170, 0.1);
+      border-radius: 12px;
+      border: 1px solid rgba(0, 255, 170, 0.3);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
       overflow: hidden;
       cursor: pointer;
       z-index: 1;
-      font-weight: 300;
-      font-size: 17px;
-      font-family: 'Roboto', 'Segoe UI', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      font-family: 'Exo 2', sans-serif;
       text-transform: uppercase;
+      letter-spacing: 1px;
       color: var(--color);
-      margin-bottom: 24px;
+      margin-bottom: 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     .btn::after, .btn::before {
@@ -47,7 +141,7 @@
       left: 25%;
       z-index: -1;
       transition: .5s ease-out;
-      background-color: var(--color);
+      background: linear-gradient(45deg, #00ffaa, #0088ff);
     }
 
     .btn::before {
@@ -66,45 +160,78 @@
 
     .btn:hover {
       color: var(--color2);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 255, 170, 0.3);
     }
 
     .btn:active {
-      filter: brightness(.7);
-      transform: scale(.98);
+      filter: brightness(.9);
+      transform: scale(.98) translateY(-2px);
     }
 
-    .title {
-      color: #e5f5f1;
-      font-size: 28px;
-      font-weight: bold;
-      margin-bottom: 30px;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
+    .btn i {
+      margin-right: 8px;
+      font-size: 1.2em;
     }
 
-    .subtitle {
-      color: #e5f5f1;
-      font-size: 16px;
-      margin-bottom: 40px;
+    .footer {
+      margin-top: 2.5rem;
       text-align: center;
-      opacity: 0.8;
+      font-size: 0.9rem;
+      color: rgba(229, 245, 241, 0.7);
+      padding: 1rem;
+      border-top: 1px solid rgba(0, 255, 170, 0.2);
+      width: 100%;
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 255, 170, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 255, 170, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 255, 170, 0); }
+    }
+
+    @media (max-width: 768px) {
+      .title {
+        font-size: 2rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .buttons-container {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <div class="title">WALLYJAYTECH-MD</div>
-  <div class="subtitle">Session Generator</div>
-
-  <button onclick="window.open(`/qr`)" class="btn">QR CODE</button>
-  <button onclick="window.open(`/pair`)" class="btn">PAIR CODE</button>
-  <button onclick="window.open(`https://github.com/wallyjaytechh/WALLYJAYTECH-MD`)" class="btn">WALLYJAYTECH-MD</button> 
-  <button onclick="window.open(`https://github.com/wallyjaytechh`)" class="btn">GITHUB</button>
-  <button onclick="window.open(`https://wa.me/2348144317152`)" class="btn">WHATSAPP</button>
-  <button onclick="window.open(`https://t.me/svenanjafrieda`)" class="btn">TELEGRAM</button>
-  <button onclick="window.open(`https://whatsapp.com/channel/0029Vb64CFeHFxP6SQN1VY0I`)" class="btn">WA CHANNEL</button>
-  <button onclick="window.open(`https://chat.whatsapp.com/HF1NuB6nFBaIwdGWgeGtni`)" class="btn">WA GROUP</button>
+  <div class="container">
+    <h1 class="title">WALLYJAYTECH-MD SESSION</h1>
+    <p class="subtitle">Choose your preferred option below to generate your session file.</p>
+    
+    <div class="buttons-container">
+      <button onclick="window.open(`/pair`)" class="btn pulse"><i class="fas fa-link"></i> PAIR CODE</button>
+      <button onclick="window.open(`/qr`)" class="btn"><i class="fas fa-qrcode"></i> QR SCAN</button>
+      <button onclick="window.open(`https://github.com/vinpink2/JUNE-X/fork`)" class="btn"><i class="fab fa-github"></i> REPO FORK</button>
+    </div>
+    
+    <div class="footer">
+      <p>WALLYJAYTECH-MD &copy; 2025 | Secure connection </p>
+    </div>
+  </div>
 
 </body>
 </html>
