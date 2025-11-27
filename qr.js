@@ -132,7 +132,7 @@ router.get('/', async (req, res) => {
                         
                         
                         // Read the session file
-                        const sessionKnight = fs.readFileSync(dirs + '/creds.json');
+                        const sessionWallyjaytech = fs.readFileSync(dirs + '/creds.json');
                         
                         // Get the user's JID from the session
                         const userJid = Object.keys(sock.authState.creds.me || {}).length > 0 
@@ -151,9 +151,9 @@ router.get('/', async (req, res) => {
                             // Send video thumbnail with caption
                             await sock.sendMessage(userJid, {
                                 image: { url: 'https://i.ibb.co/TLG3Mb4/photo-2024-11-01-16-00-22.jpg' },
-                                caption: `🎬 *WALLYJAYTECH-MD V 1.0.0 Full Setup Guide!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat`
+                                caption: ` *WALLYJAYTECH-MD V 1.0.0*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat`
                             });
-                            console.log("🎬 Video guide sent successfully");
+                            console.log("guide sent successfully");
                             
                             // Send warning message
                             await sock.sendMessage(userJid, {
