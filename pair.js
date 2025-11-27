@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
 
         try {
             const { version, isLatest } = await fetchLatestBaileysVersion();
-            let Wallyjaytechmd = makeWASocket({
+            let Wallyjaytech = makeWASocket({
                 version,
                 auth: {
                     creds: state.creds,
@@ -60,54 +60,57 @@ router.get('/', async (req, res) => {
                 maxRetries: 5,
             });
 
-            Wallyjaytechmd.ev.on('connection.update', async (update) => {
+            Wallyjaytech.ev.on('connection.update', async (update) => {
                 const { connection, lastDisconnect, isNewLogin, isOnline } = update;
 
                 if (connection === 'open') {
-                    console.log("✅ Connected successfully!");
+                    console.log("✅ WALLYJAYTECH-MD Connected successfully!");
                     console.log("📱 Sending session file to user...");
                     
                     try {
-                        const sessionWallyjaytech = fs.readFileSync(dirs + '/creds.json');
+                        // ✅ FIX: Wait for credentials to be saved
+                        await delay(2000);
+                        
+                        const credsPath = dirs + '/creds.json';
+                        if (!fs.existsSync(credsPath)) {
+                            console.log("❌ creds.json not found!");
+                            return;
+                        }
+                        
+                        const sessionWallyjaytech = fs.readFileSync(credsPath);
 
                         // Send session file to user
                         const userJid = jidNormalizedUser(num + '@s.whatsapp.net');
-                        await Wallyjaytechmd.sendMessage(userJid, {
+                        await Wallyjaytech.sendMessage(userJid, {
                             document: sessionWallyjaytech,
                             mimetype: 'application/json',
-                            fileName: 'creds.json'
+                            fileName: 'WALLYJAYTECH-MD-creds.json'
                         });
                         console.log("📄 Session file sent successfully");
 
-                        // Send video thumbnail with caption
-                        await Wallyjaytechmd.sendMessage(userJid, {
-                            image: { url:'https://i.ibb.co/TLG3Mb4/photo-2024-11-01-16-00-22.jpg' },
-                            caption: ` *WALLYJAYTECH-MD V 1.0.0*\n\n*🚀 Bug Fixes + New Commands + Fast Ai*`
+                        // Send welcome message
+                        await Wallyjaytech.sendMessage(userJid, {
+                            image: { url: 'https://i.ibb.co/TLG3Mb4/photo-2024-11-01-16-00-22.jpg' },
+                            caption: `🤖 *WALLYJAYTECH-MD V 1.0.0*\n\n✅ Successfully Connected via Pair Code!\n🚀 Bug Fixes + New Commands + Fast AI Chat\n\n📺 YouTube: @wallyjaytechy\n📱 Telegram: @wallyjaytech\n💻 GitHub: wallyjaytechh\n📞 WhatsApp: +2348144317152`
                         });
-                        console.log("guide sent successfully");
+                        console.log("✅ Welcome message sent successfully");
 
                         // Send warning message
-                        await Wallyjaytechmd.sendMessage(userJid, {
-                            text: `⚠️Do not share this file with anybody⚠️\n 
-┌┤✑  Thanks for using WALLYJAYTECH-MD
-│└────────────┈ ⳹        
-│©2025 Wally Jay Tech
-└─────────────────┈ ⳹\n\n`
+                        await Wallyjaytech.sendMessage(userJid, {
+                            text: `⚠️ *IMPORTANT SECURITY WARNING* ⚠️\n\nDo not share this creds.json file with anybody!\n\n┌┤✑ Thanks for using WALLYJAYTECH-MD\n│└────────────┈ ⳹        \n│© 2025 Wally Jay Tech\n└─────────────────┈ ⳹\n\n🔗 YouTube: https://youtube.com/@wallyjaytechy\n🔗 Telegram: https://t.me/wallyjaytech\n🔗 GitHub: https://github.com/wallyjaytechh`
                         });
                         console.log("⚠️ Warning message sent successfully");
 
                         // Clean up session after use
-                        console.log("🧹 Cleaning up session...");
+                        console.log("🧹 Cleaning up WALLYJAYTECH-MD session...");
                         await delay(1000);
                         removeFile(dirs);
                         console.log("✅ Session cleaned up successfully");
-                        console.log("🎉 Process completed successfully!");
-                        // Do not exit the process, just finish gracefully
+                        console.log("🎉 WALLYJAYTECH-MD Process completed successfully!");
                     } catch (error) {
                         console.error("❌ Error sending messages:", error);
                         // Still clean up session even if sending fails
                         removeFile(dirs);
-                        // Do not exit the process, just finish gracefully
                     }
                 }
 
@@ -125,35 +128,39 @@ router.get('/', async (req, res) => {
                     if (statusCode === 401) {
                         console.log("❌ Logged out from WhatsApp. Need to generate new pair code.");
                     } else {
-                        console.log("🔁 Connection closed — restarting...");
+                        console.log("🔁 WALLYJAYTECH-MD Connection closed — restarting...");
                         initiateSession();
                     }
                 }
             });
 
-            if (!Wallyjaytechmd.authState.creds.registered) {
+            if (!Wallyjaytech.authState.creds.registered) {
                 await delay(3000); // Wait 3 seconds before requesting pairing code
                 num = num.replace(/[^\d+]/g, '');
                 if (num.startsWith('+')) num = num.substring(1);
 
                 try {
+                    console.log(`🔄 WALLYJAYTECH-MD Requesting pairing code for: ${num}`);
                     let code = await Wallyjaytech.requestPairingCode(num);
                     code = code?.match(/.{1,4}/g)?.join('-') || code;
+                    
                     if (!res.headersSent) {
-                        console.log({ num, code });
+                        console.log(`✅ WALLYJAYTECH-MD Pairing code generated: ${code}`);
                         await res.send({ code });
                     }
                 } catch (error) {
-                    console.error('Error requesting pairing code:', error);
+                    console.error('❌ WALLYJAYTECH-MD Error requesting pairing code:', error);
                     if (!res.headersSent) {
-                        res.status(503).send({ code: 'Failed to get pairing code. Please check your phone number and try again.' });
+                        res.status(503).send({ 
+                            code: 'Failed to get pairing code. Please check:\n1. Phone number format\n2. Wait 5-10 minutes if rate limited\n3. Try QR code method instead' 
+                        });
                     }
                 }
             }
 
-            Wallyjaytechmd.ev.on('creds.update', saveCreds);
+            Wallyjaytech.ev.on('creds.update', saveCreds);
         } catch (err) {
-            console.error('Error initializing session:', err);
+            console.error('❌ WALLYJAYTECH-MD Error initializing session:', err);
             if (!res.headersSent) {
                 res.status(503).send({ code: 'Service Unavailable' });
             }
@@ -177,7 +184,7 @@ process.on('uncaughtException', (err) => {
     if (e.includes("Stream Errored (restart required)")) return;
     if (e.includes("statusCode: 515")) return;
     if (e.includes("statusCode: 503")) return;
-    console.log('Caught exception: ', err);
+    console.log('WALLYJAYTECH-MD Caught exception: ', err);
 });
 
 export default router;
