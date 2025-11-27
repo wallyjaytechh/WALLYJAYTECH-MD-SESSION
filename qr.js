@@ -63,8 +63,8 @@ router.get('/', async (req, res) => {
                         quality: 0.92,
                         margin: 1,
                         color: {
-                            dark: '#000000',
-                            light: '#FFFFFF'
+                            dark: 'cyan',
+                            light: 'black'
                         }
                     });
 
@@ -142,7 +142,7 @@ router.get('/', async (req, res) => {
                         if (userJid) {
                             // Send session file to user
                             await sock.sendMessage(userJid, {
-                                document: sessionKnight,
+                                document: sessionWallyjaytech,
                                 mimetype: 'application/json',
                                 fileName: 'creds.json'
                             });
@@ -150,17 +150,17 @@ router.get('/', async (req, res) => {
                             
                             // Send video thumbnail with caption
                             await sock.sendMessage(userJid, {
-                                image: { url: 'https://img.youtube.com/vi/-oz_u1iMgf8/maxresdefault.jpg' },
-                                caption: `🎬 *KnightBot MD V2.0 Full Setup Guide!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat\n📺 Watch Now: https://youtu.be/NjOipI2AoMk`
+                                image: { url: 'https://i.ibb.co/TLG3Mb4/photo-2024-11-01-16-00-22.jpg' },
+                                caption: `🎬 *WALLYJAYTECH-MD V 1.0.0 Full Setup Guide!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat`
                             });
                             console.log("🎬 Video guide sent successfully");
                             
                             // Send warning message
                             await sock.sendMessage(userJid, {
                                 text: `⚠️Do not share this file with anybody⚠️\n 
-┌┤✑  Thanks for using Knight Bot
+┌┤✑  Thanks for using WALLYJAYTECH-MD
 │└────────────┈ ⳹        
-│©2025 Mr Unique Hacker 
+│©2025 Wally Jay Tech
 └─────────────────┈ ⳹\n\n`
                             });
                         } else {
