@@ -1,111 +1,183 @@
-const PastebinAPI = require('pastebin-js');
-const pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL');
-const { makeid } = require('./id');
-const express = require('express');
-const fs = require('fs');
-let router = express.Router();
-const pino = require('pino');
-const {
-    default: Mbuvi_Tech,
-    useMultiFileAuthState,
-    delay,
-    makeCacheableSignalKeyStore,
-    Browsers
-} = require('@whiskeysockets/baileys');
+import express from 'express';
+import fs from 'fs';
+import pino from 'pino';
+import { makeWASocket, useMultiFileAuthState, delay, makeCacheableSignalKeyStore, Browsers, jidNormalizedUser, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
+import pn from 'awesome-phonenumber';
 
+const router = express.Router();
+
+// Ensure the session directory exists
 function removeFile(FilePath) {
-    if (!fs.existsSync(FilePath)) return false;
-    fs.rmSync(FilePath, { recursive: true, force: true });
+    try {
+        if (!fs.existsSync(FilePath)) return false;
+        fs.rmSync(FilePath, { recursive: true, force: true });
+    } catch (e) {
+        console.error('Error removing file:', e);
+    }
 }
 
 router.get('/', async (req, res) => {
-    const id = makeid();
     let num = req.query.number;
-    
-    async function Mbuvi_MD_PAIR_CODE() {
-        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+    let dirs = './' + (num || `session`);
+
+    // Remove existing session if present
+    await removeFile(dirs);
+
+    // Clean the phone number - remove any non-digit characters
+    num = num.replace(/[^0-9]/g, '');
+
+    // Validate the phone number using awesome-phonenumber
+    const phone = pn('+' + num);
+    if (!phone.isValid()) {
+        if (!res.headersSent) {
+            return res.status(400).send({ code: 'Invalid phone number. Please enter your full international number (e.g., 15551234567 for US, 447911123456 for UK, 84987654321 for Vietnam, etc.) without + or spaces.' });
+        }
+        return;
+    }
+    // Use the international number format (E.164, without '+')
+    num = phone.getNumber('e164').replace('+', '');
+
+    async function initiateSession() {
+        const { state, saveCreds } = await useMultiFileAuthState(dirs);
+
         try {
-            let Pair_Code_By_Mbuvi_Tech = Mbuvi_Tech({
+            const { version, isLatest } = await fetchLatestBaileysVersion();
+            let KnightBot = makeWASocket({
+                version,
                 auth: {
                     creds: state.creds,
-                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
-                version: [2, 3000, 1025190524],
                 printQRInTerminal: false,
-                logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
-                browser: ["Windows", "Firefox", "130.0.1"],
+                logger: pino({ level: "fatal" }).child({ level: "fatal" }),
+                browser: Browsers.windows('Chrome'),
+                markOnlineOnConnect: false,
+                generateHighQualityLinkPreview: false,
+                defaultQueryTimeoutMs: 60000,
+                connectTimeoutMs: 60000,
+                keepAliveIntervalMs: 30000,
+                retryRequestDelayMs: 250,
+                maxRetries: 5,
             });
 
-            if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
-                await delay(1500);
-                num = num.replace(/[^0-9]/g, '');
-               const custom = "WALLYBOT"; // 8 characters like the original "JUNEXBOT"
-                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num, custom);
-                if (!res.headersSent) {
-                    await res.send({ code });
+            KnightBot.ev.on('connection.update', async (update) => {
+                const { connection, lastDisconnect, isNewLogin, isOnline } = update;
+
+                if (connection === 'open') {
+                    console.log("✅ Connected successfully!");
+                    console.log("📱 Sending session file to user...");
+                    
+                    try {
+                        const sessionKnight = fs.readFileSync(dirs + '/creds.json');
+
+                        // Send session file to user
+                        const userJid = jidNormalizedUser(num + '@s.whatsapp.net');
+                        await KnightBot.sendMessage(userJid, {
+                            document: sessionKnight,
+                            mimetype: 'application/json',
+                            fileName: 'creds.json'
+                        });
+                        console.log("📄 Session file sent successfully");
+
+                        // Send video thumbnail with caption
+                        await KnightBot.sendMessage(userJid, {
+                            image: { url: 'https://img.youtube.com/vi/-oz_u1iMgf8/maxresdefault.jpg' },
+                            caption: `🎬 *KnightBot MD V2.0 Full Setup Guide!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat\n📺 Watch Now: https://youtu.be/NjOipI2AoMk`
+                        });
+                        console.log("🎬 Video guide sent successfully");
+
+                        // Send warning message
+                        await KnightBot.sendMessage(userJid, {
+                            text: `⚠️Do not share this file with anybody⚠️\n 
+┌┤✑  Thanks for using Knight Bot
+│└────────────┈ ⳹        
+│©2025 Mr Unique Hacker 
+└─────────────────┈ ⳹\n\n`
+                        });
+                        console.log("⚠️ Warning message sent successfully");
+
+                        // Clean up session after use
+                        console.log("🧹 Cleaning up session...");
+                        await delay(1000);
+                        removeFile(dirs);
+                        console.log("✅ Session cleaned up successfully");
+                        console.log("🎉 Process completed successfully!");
+                        // Do not exit the process, just finish gracefully
+                    } catch (error) {
+                        console.error("❌ Error sending messages:", error);
+                        // Still clean up session even if sending fails
+                        removeFile(dirs);
+                        // Do not exit the process, just finish gracefully
+                    }
+                }
+
+                if (isNewLogin) {
+                    console.log("🔐 New login via pair code");
+                }
+
+                if (isOnline) {
+                    console.log("📶 Client is online");
+                }
+
+                if (connection === 'close') {
+                    const statusCode = lastDisconnect?.error?.output?.statusCode;
+
+                    if (statusCode === 401) {
+                        console.log("❌ Logged out from WhatsApp. Need to generate new pair code.");
+                    } else {
+                        console.log("🔁 Connection closed — restarting...");
+                        initiateSession();
+                    }
+                }
+            });
+
+            if (!KnightBot.authState.creds.registered) {
+                await delay(3000); // Wait 3 seconds before requesting pairing code
+                num = num.replace(/[^\d+]/g, '');
+                if (num.startsWith('+')) num = num.substring(1);
+
+                try {
+                    let code = await KnightBot.requestPairingCode(num);
+                    code = code?.match(/.{1,4}/g)?.join('-') || code;
+                    if (!res.headersSent) {
+                        console.log({ num, code });
+                        await res.send({ code });
+                    }
+                } catch (error) {
+                    console.error('Error requesting pairing code:', error);
+                    if (!res.headersSent) {
+                        res.status(503).send({ code: 'Failed to get pairing code. Please check your phone number and try again.' });
+                    }
                 }
             }
 
-            Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
-            Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
-                const { connection, lastDisconnect } = s;
-                if (connection === 'open') {
-                    await Pair_Code_By_Mbuvi_Tech.newsletterFollow("120363423767541304@newsletter");
-                    await Pair_Code_By_Mbuvi_Tech.groupAcceptInvite("Hd14oCh8LT1A3EheIpZycL");
-                    await delay(5000);
-                    
-                    // Read and send creds.json directly
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    await delay(1000);
-                    
-                    // Send the creds.json content directly without prefix
-                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(
-                        Pair_Code_By_Mbuvi_Tech.user.id, 
-                        { 
-                            document: Buffer.from(data), 
-                            fileName: 'creds.json', 
-                            mimetype: 'application/json' 
-                        }
-                    );
-
-                    let Wallyjay_Tech_TEXT = `
-╔════════════════════
-║『 SESSION CONNECTED』
-║ 🟢 BOT: WallyJayTech
-║ 🟢 OWNER: WallyJay
-║ 🟢 TYPE: creds.json
-╚════════════════════
-
-Session file (creds.json) has been sent!
-Save this file for your bot.
-
-Don't Forget To Give Star⭐ To My Repo
-______________________________`;
-
-                    await Pair_Code_By_Mbuvi_Tech.sendMessage(
-                        Pair_Code_By_Mbuvi_Tech.user.id, 
-                        { text: Wallyjay_Tech_TEXT }, 
-                        { quoted: session }
-                    );
-
-                    await delay(100);
-                    await Pair_Code_By_Mbuvi_Tech.ws.close();
-                    return await removeFile('./temp/' + id);
-                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(10000);
-                    Mbuvi_MD_PAIR_CODE();
-                }
-            });
+            KnightBot.ev.on('creds.update', saveCreds);
         } catch (err) {
-            console.log('Service restarted');
-            await removeFile('./temp/' + id);
+            console.error('Error initializing session:', err);
             if (!res.headersSent) {
-                await res.send({ code: 'Service Currently Unavailable' });
+                res.status(503).send({ code: 'Service Unavailable' });
             }
         }
     }
-    
-    return await Mbuvi_MD_PAIR_CODE();
+
+    await initiateSession();
 });
 
-module.exports = router;
+// Global uncaught exception handler
+process.on('uncaughtException', (err) => {
+    let e = String(err);
+    if (e.includes("conflict")) return;
+    if (e.includes("not-authorized")) return;
+    if (e.includes("Socket connection timeout")) return;
+    if (e.includes("rate-overlimit")) return;
+    if (e.includes("Connection Closed")) return;
+    if (e.includes("Timed Out")) return;
+    if (e.includes("Value not found")) return;
+    if (e.includes("Stream Errored")) return;
+    if (e.includes("Stream Errored (restart required)")) return;
+    if (e.includes("statusCode: 515")) return;
+    if (e.includes("statusCode: 503")) return;
+    console.log('Caught exception: ', err);
+});
+
+export default router;
