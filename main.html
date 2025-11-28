@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>WALLYJAYTECH-MD SESSION</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .bg {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(-45deg, #00BCD4, #000000, #FFFFFF, #FF0000);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      position: relative;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Outfit", sans-serif;
+      overflow: hidden;
+    }
+
+    .main-container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 40px;
+      border-radius: 20px;
+      border: 3px solid #00BCD4;
+      box-shadow: 0 15px 35px rgba(0, 188, 212, 0.3);
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .main-container::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      background: linear-gradient(45deg, #00BCD4, #FF0000, #00BCD4);
+      border-radius: 23px;
+      z-index: -1;
+      animation: borderRotate 4s linear infinite;
+    }
+
+    @keyframes borderRotate {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    .brand-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #00BCD4;
+      width: 100%;
+    }
+
+    .brand-title {
+      color: #00BCD4;
+      font-size: 32px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0, 188, 212, 0.5);
+    }
+
+    .brand-subtitle {
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .button {
+      width: 250px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #00BCD4, #00838F);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      margin: 15px 0;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 188, 212, 0.4);
+    }
+
+    .button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 188, 212, 0.6);
+      background: linear-gradient(135deg, #FF0000, #B71C1C);
+    }
+
+    .button:hover::before {
+      left: 100%;
+    }
+
+    .button:active {
+      transform: translateY(-1px);
+    }
+
+    .button span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .divider {
+      width: 200px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00BCD4, transparent);
+      margin: 20px 0;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      color: #FFFFFF;
+      padding: 15px 0;
+      text-align: center;
+      font-size: 14px;
+      border-top: 2px solid #00BCD4;
+      z-index: 100;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-brand {
+      color: #00BCD4;
+      font-weight: 700;
+    }
+
+    .footer-contact {
+      color: #FFFFFF;
+      opacity: 0.8;
+    }
+
+    .tech-badge {
+      background: linear-gradient(135deg, #FF0000, #B71C1C);
+      color: #FFFFFF;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 30px 20px;
+        margin: 20px;
+      }
+      
+      .brand-title {
+        font-size: 24px;
+      }
+      
+      .button {
+        width: 220px;
+        height: 55px;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .main-container {
+      animation: fadeIn 1s ease-out;
+    }
+  </style>
+</head>
+<body>
+<div class="bg">
+  <div class="main-container">
+    <div class="brand-header">
+      <h1 class="brand-title">WALLYJAYTECH-MD</h1>
+      <p class="brand-subtitle">WHATSAPP BOT SESSION MANAGER</p>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <a href="/pair" class="button"> 
+      <span>GET PAIRING CODE</span> 
+    </a>
+    
+    <div class="divider"></div>
+    
+    <div class="tech-badge">
+      ADVANCED SESSION MANAGEMENT
+    </div>
+  </div>
+  
+  <footer>
+    <div class="footer-content">
+      <span class="footer-brand">WALLYJAYTECH-MD</span>
+      <span>•</span>
+      <span class="footer-contact">WALLY JAY TECH</span>
+      <span>•</span>
+      <span class="footer-contact">+2348144317152</span>
+      <span>•</span>
+      <span>&copy; <span id="currentYear"></span></span>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // Set current year in footer
+  document.getElementById('currentYear').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

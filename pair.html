@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WALLYJAYTECH-MD PAIR CODE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Outfit", sans-serif;
+      background: linear-gradient(-45deg, #00BCD4, #000000, #FFFFFF, #FF0000);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .box {
+      width: 350px;
+      padding: 30px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.9);
+      border-radius: 15px;
+      border: 3px solid #00BCD4;
+      box-shadow: 0 10px 30px rgba(0, 188, 212, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .box::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #00BCD4, #FF0000, #00BCD4);
+      z-index: -1;
+      border-radius: 17px;
+      animation: borderGlow 3s linear infinite;
+    }
+
+    @keyframes borderGlow {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; }
+      100% { opacity: 0.7; }
+    }
+
+    .header {
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #00BCD4;
+    }
+
+    .header h2 {
+      color: #00BCD4;
+      font-size: 24px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .header h3 {
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .instructions {
+      color: #FFFFFF;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .input-container {
+      display: flex;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 5px;
+      gap: 5px;
+      margin-bottom: 20px;
+      border: 1px solid #00BCD4;
+    }
+
+    .input-container input {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      color: #000000;
+      border-radius: 8px 0 0 8px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .input-container input::placeholder {
+      color: #666;
+    }
+
+    .input-container input:focus {
+      background: #FFFFFF;
+    }
+
+    .input-container button {
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #00BCD4, #00838F);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 80px;
+    }
+
+    .input-container button:hover {
+      background: linear-gradient(135deg, #FF0000, #B71C1C);
+      transform: translateY(-2px);
+    }
+
+    .input-container button:active {
+      transform: translateY(0);
+    }
+
+    .status-message {
+      color: #FFFFFF;
+      margin: 15px 0;
+      font-weight: 600;
+      min-height: 20px;
+    }
+
+    .code-display {
+      background: rgba(0, 188, 212, 0.1);
+      border: 2px solid #00BCD4;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .code-display:hover {
+      background: rgba(0, 188, 212, 0.2);
+      transform: scale(1.02);
+    }
+
+    .code-text {
+      color: #00BCD4;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .copy-text {
+      color: #FFFFFF;
+      font-size: 12px;
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #333;
+      color: #FFFFFF;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .error {
+      color: #FF0000;
+      background: rgba(255, 0, 0, 0.1);
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #FF0000;
+      margin: 10px 0;
+    }
+
+    .success {
+      color: #00BCD4;
+      background: rgba(0, 188, 212, 0.1);
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #00BCD4;
+      margin: 10px 0;
+    }
+
+    @media (max-width: 500px) {
+      .box {
+        width: 90%;
+        padding: 20px;
+      }
+      
+      .input-container {
+        flex-direction: column;
+      }
+      
+      .input-container input {
+        border-radius: 8px;
+        margin-bottom: 5px;
+      }
+      
+      .input-container button {
+        border-radius: 8px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="box">
+    <div class="header">
+      <h2>WALLYJAYTECH-MD</h2>
+      <h3>PAIRING CODE GENERATOR</h3>
+    </div>
+    
+    <div class="instructions">
+      Enter your WhatsApp number with country code to generate pairing code
+    </div>
+
+    <div class="input-container">
+      <input type="tel" id="number" placeholder="+2348144317152" pattern="[+][0-9]{10,15}">
+      <button id="submit">GET CODE</button>
+    </div>
+
+    <div class="status-message" id="status"></div>
+    
+    <main id="pair"></main>
+
+    <div class="footer">
+      WALLY JAY TECH • +2348144317152
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+<script>
+  let pairElement = document.getElementById("pair");
+  let submitButton = document.getElementById("submit");
+  let numberInput = document.getElementById("number");
+  let statusElement = document.getElementById("status");
+
+  async function copyCode() {
+    let codeElement = document.getElementById("copy");
+    let codeText = codeElement.innerText.replace('CODE: ', '');
+    
+    try {
+      await navigator.clipboard.writeText(codeText);
+      codeElement.innerHTML = 'CODE: <span style="color:#00FF00">COPIED!</span>';
+      
+      setTimeout(() => {
+        codeElement.innerHTML = `CODE: <span class="code-text">${codeText}</span>`;
+      }, 2000);
+    } catch (err) {
+      statusElement.innerHTML = '<div class="error">Failed to copy code</div>';
+    }
+  }
+
+  submitButton.addEventListener("click", async (e) => {
+    e.preventDefault();
+    
+    if (!numberInput.value) {
+      statusElement.innerHTML = '<div class="error">Please enter your WhatsApp number</div>';
+      return;
+    }
+
+    // Clean the number - remove any non-digit characters except +
+    let cleanNumber = numberInput.value.replace(/[^\d+]/g, '');
+    
+    if (cleanNumber.replace('+', '').length < 10) {
+      statusElement.innerHTML = '<div class="error">Invalid phone number format</div>';
+      return;
+    }
+
+    // Remove + for API call if present
+    let apiNumber = cleanNumber.startsWith('+') ? cleanNumber.substring(1) : cleanNumber;
+    
+    statusElement.innerHTML = '<div class="success">Generating pairing code...</div>';
+    submitButton.disabled = true;
+    submitButton.textContent = 'PROCESSING...';
+
+    try {
+      let { data } = await axios.get(`/code?number=${apiNumber}`);
+      
+      if (data.error) {
+        statusElement.innerHTML = `<div class="error">${data.error}</div>`;
+      } else {
+        let code = data.code || "Service Unavailable";
+        pairElement.innerHTML = `
+          <div class="code-display" onclick="copyCode()" id="copy">
+            <div class="code-text">${code}</div>
+            <div class="copy-text">Click to copy code</div>
+          </div>
+        `;
+        statusElement.innerHTML = '<div class="success">Code generated successfully!</div>';
+      }
+    } catch (error) {
+      statusElement.innerHTML = '<div class="error">Service unavailable. Please try again.</div>';
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'GET CODE';
+    }
+  });
+
+  // Allow Enter key to submit
+  numberInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      submitButton.click();
+    }
+  });
+</script>
+</body>
+</html>
